@@ -1,0 +1,126 @@
+$containerSize-sm: 25rem;
+$dotSize-sm: 1.5rem;
+
+$animationDuration: 4s;
+
+@mixin animation($animate...) {
+    $max: length($animate);
+    $animations: '';
+
+    @for $i from 1 through $max {
+        $animations: #{$animations + nth($animate, $i)};
+
+        @if $i < $max {
+            $animations: #{$animations + ", "};
+        }
+    }
+    -webkit-animation: $animations;
+    -moz-animation:    $animations;
+    -o-animation:      $animations;
+    animation:         $animations;
+}
+
+@mixin transform ($transform) {
+    -webkit-transform: $transform;
+    -moz-transform: $transform;
+    -o-transform: $transform;
+    transform: $transform;
+}
+
+@mixin transform-origin ($origin) {
+    -webkit-transform-origin: $origin;
+    -moz-transform-origin: $origin;
+    -o-transform-origin: $origin;
+    transform-origin: $origin;
+}
+
+@mixin keyframes($animationName) {
+    @-webkit-keyframes #{$animationName} {
+        @content;
+    }
+    @-moz-keyframes #{$animationName} {
+        @content;
+    }
+    @-o-keyframes #{$animationName} {
+        @content;
+    }
+    @keyframes #{$animationName} {
+        @content;
+    }
+}
+
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.container {
+    position: relative;
+    width: $containerSize-sm;
+    height: $containerSize-sm;
+    border: 1px solid #000;
+    @include transform(rotate(0));
+    @include animation('animate-spin #{$animationDuration} infinite');
+
+    .dot-box {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50%;
+
+        &::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, 50%);
+            background: black;
+            border-radius: 50%;
+            width: $dotSize-sm;
+            height: $dotSize-sm;
+            @include animation('animate-dots #{$animationDuration} ease-in-out infinite');
+        }
+    }
+
+    @for $i from 1 to 4 {
+        .dot-box:nth-child(#{$i}) {
+            @include transform(rotate(90deg * $i));
+            @include transform-origin(bottom);
+        }
+    }
+}
+
+@include keyframes(animate-dots) {
+    0% {
+        @include transform(translate(-50%, 50%));
+    }
+
+    50% {
+        @include transform(translate(-50%, $containerSize-sm * .4));
+    }
+
+    100% {
+        @include transform(translate(-50%, 50%));
+    }
+}
+
+@include keyframes(animate-spin) {
+    0% {
+        @include transform(rotate(0));
+    }
+    100% {
+        @include transform(rotate(360deg));
+    }
+}
